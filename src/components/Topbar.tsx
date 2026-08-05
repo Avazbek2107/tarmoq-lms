@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { LogOut, Menu, Moon, Sun, User } from "lucide-react";
+import { LayoutDashboard, LogOut, Menu, Moon, Sun, User } from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
 import { useAuth } from "../hooks/useAuth";
 
@@ -37,6 +37,15 @@ export default function Topbar({ onMenu }: { onMenu: () => void }) {
 
         {user ? (
           <div className="flex items-center gap-2">
+            {user.role === "admin" && (
+              <Link
+                to="/admin"
+                className="flex items-center gap-1.5 rounded-full bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700"
+              >
+                <LayoutDashboard size={13} />
+                <span className="hidden sm:inline">Admin panel</span>
+              </Link>
+            )}
             <span className="flex items-center gap-1.5 rounded-full bg-ink-100 px-3 py-1.5 text-xs font-semibold text-ink-700 dark:bg-ink-800 dark:text-ink-200">
               <User size={13} />
               <span className="hidden sm:inline">{user.name}</span>

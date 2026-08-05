@@ -1,20 +1,28 @@
 import { useCallback, useState } from "react";
 
+export type Role = "student" | "admin";
+
 interface StoredUser {
   name: string;
   email: string;
   password: string;
+  createdAt: string;
 }
 
 export interface AuthUser {
   name: string;
   email: string;
+  role: Role;
 }
 
 const USERS_KEY = "tarmoq-lms:users";
 const SESSION_KEY = "tarmoq-lms:session";
 
-function readUsers(): StoredUser[] {
+export const ADMIN_EMAIL = "admin@tarmoqlms.uz";
+const ADMIN_PASSWORD = "Admin123";
+const ADMIN_NAME = "Administrator";
+
+export function readUsers(): StoredUser[] {
   try {
     const raw = localStorage.getItem(USERS_KEY);
     return raw ? (JSON.parse(raw) as StoredUser[]) : [];
@@ -25,6 +33,11 @@ function readUsers(): StoredUser[] {
 
 function writeUsers(users: StoredUser[]) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  window.dispatchEvent(new Event("tarmoq-lms:users-changed"));
+}
+
+export function deleteUser(email: string) {
+  writeUsers(readUsers().filter((u) => u.email !== email));
 }
 
 function readSession(): AuthUser | null {
@@ -42,13 +55,21 @@ export function useAuth() {
   const signUp = useCallback(
     (name: string, email: string, password: string): { ok: true } | { ok: false; error: string } => {
       const normalizedEmail = email.trim().toLowerCase();
+      if (normalizedEmail === ADMIN_EMAIL) {
+        return { ok: false, error: "Bu email band qilingan." };
+      }
       const users = readUsers();
       if (users.some((u) => u.email === normalizedEmail)) {
         return { ok: false, error: "Bu email bilan hisob allaqachon mavjud." };
       }
-      users.push({ name: name.trim(), email: normalizedEmail, password });
+      users.push({
+        name: name.trim(),
+        email: normalizedEmail,
+        password,
+        createdAt: new Date().toISOString(),
+      });
       writeUsers(users);
-      const session: AuthUser = { name: name.trim(), email: normalizedEmail };
+      const session: AuthUser = { name: name.trim(), email: normalizedEmail, role: "student" };
       localStorage.setItem(SESSION_KEY, JSON.stringify(session));
       setUser(session);
       return { ok: true };
@@ -59,12 +80,23 @@ export function useAuth() {
   const signIn = useCallback(
     (email: string, password: string): { ok: true } | { ok: false; error: string } => {
       const normalizedEmail = email.trim().toLowerCase();
+
+      if (normalizedEmail === ADMIN_EMAIL) {
+        if (password !== ADMIN_PASSWORD) {
+          return { ok: false, error: "Email yoki parol xato." };
+        }
+        const session: AuthUser = { name: ADMIN_NAME, email: ADMIN_EMAIL, role: "admin" };
+        localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+        setUser(session);
+        return { ok: true };
+      }
+
       const users = readUsers();
       const found = users.find((u) => u.email === normalizedEmail && u.password === password);
       if (!found) {
         return { ok: false, error: "Email yoki parol xato, yoki hisob mavjud emas." };
       }
-      const session: AuthUser = { name: found.name, email: found.email };
+      const session: AuthUser = { name: found.name, email: found.email, role: "student" };
       localStorage.setItem(SESSION_KEY, JSON.stringify(session));
       setUser(session);
       return { ok: true };
