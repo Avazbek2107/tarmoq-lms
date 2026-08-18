@@ -1,0 +1,12 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Real fayl yoki papka bo'lsa, uni to'g'ridan-to'g'ri bering
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Qolgan barcha so'rovlarni React Router boshqarishi uchun index.html'ga yo'naltirish
+  RewriteRule ^ index.html [L]
+</IfModule>

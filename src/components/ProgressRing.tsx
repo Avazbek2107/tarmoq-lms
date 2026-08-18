@@ -2,10 +2,12 @@ export default function ProgressRing({
   percent,
   size = 44,
   stroke = 4,
+  dark = false,
 }: {
   percent: number;
   size?: number;
   stroke?: number;
+  dark?: boolean;
 }) {
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -20,7 +22,7 @@ export default function ProgressRing({
           r={radius}
           fill="none"
           strokeWidth={stroke}
-          className="stroke-ink-200 dark:stroke-ink-800"
+          className={dark ? "stroke-white/10" : "stroke-ink-200 dark:stroke-ink-800"}
         />
         <circle
           cx={size / 2}
@@ -34,7 +36,11 @@ export default function ProgressRing({
           className="stroke-brand-500 transition-all duration-500"
         />
       </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-[11px] font-semibold text-ink-700 dark:text-ink-200">
+      <span
+        className={`absolute inset-0 flex items-center justify-center text-[11px] font-semibold ${
+          dark ? "text-white" : "text-ink-700 dark:text-ink-200"
+        }`}
+      >
         {percent}%
       </span>
     </div>

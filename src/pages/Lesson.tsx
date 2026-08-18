@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -17,23 +16,38 @@ import { lectureContent, practiceContent, selfStudyContent } from "../content";
 
 type TabId = "lecture" | "practice" | "selfstudy";
 
+const SECTION_PRACTICE = "amaliyot";
+const SECTION_SELFSTUDY = "mustaqil-talim";
+
 export default function Lesson() {
-  const { slug } = useParams();
+  const { slug, section } = useParams();
   const mod = slug ? getModuleBySlug(slug) : undefined;
   const { isCompleted, toggleCompleted } = useProgress();
-  const [tab, setTab] = useState<TabId>("lecture");
 
   if (!mod) return <Navigate to="/kurs" replace />;
+
+  if (section && section !== SECTION_PRACTICE && section !== SECTION_SELFSTUDY) {
+    return <Navigate to={`/kurs/${mod.slug}`} replace />;
+  }
+
+  const tab: TabId =
+    section === SECTION_PRACTICE
+      ? "practice"
+      : section === SECTION_SELFSTUDY
+        ? "selfstudy"
+        : "lecture";
 
   const index = modules.findIndex((m) => m.id === mod.id);
   const prev = index > 0 ? modules[index - 1] : undefined;
   const next = index < modules.length - 1 ? modules[index + 1] : undefined;
   const done = isCompleted(mod.id);
+  const suffix = section ? `/${section}` : "";
 
   const tabs: {
     id: TabId;
     label: string;
     icon: typeof GraduationCap;
+    href: string;
     topics: string[];
     Content: React.ComponentType;
   }[] = [
@@ -41,6 +55,7 @@ export default function Lesson() {
       id: "lecture",
       label: "Ma'ruza",
       icon: GraduationCap,
+      href: `/kurs/${mod.slug}`,
       topics: mod.lectureTopics,
       Content: lectureContent[mod.id],
     },
@@ -48,6 +63,7 @@ export default function Lesson() {
       id: "practice",
       label: "Amaliyot",
       icon: FlaskConical,
+      href: `/kurs/${mod.slug}/${SECTION_PRACTICE}`,
       topics: [mod.seminarTopic],
       Content: practiceContent[mod.id],
     },
@@ -55,6 +71,7 @@ export default function Lesson() {
       id: "selfstudy",
       label: "Mustaqil ta'lim",
       icon: NotebookPen,
+      href: `/kurs/${mod.slug}/${SECTION_SELFSTUDY}`,
       topics: mod.selfStudyTopics,
       Content: selfStudyContent[mod.id],
     },
@@ -73,6 +90,8 @@ export default function Lesson() {
         <span className="text-ink-500 dark:text-ink-300">
           {String(mod.id).padStart(2, "0")}-mavzu
         </span>
+        <span>/</span>
+        <span className="text-ink-500 dark:text-ink-300">{active.label}</span>
       </nav>
 
       <header className="mb-8">
@@ -112,9 +131,9 @@ export default function Lesson() {
 
       <div className="mb-6 flex gap-1 rounded-2xl border border-ink-200 bg-ink-50 p-1 dark:border-ink-800 dark:bg-ink-900/60">
         {tabs.map((t) => (
-          <button
+          <Link
             key={t.id}
-            onClick={() => setTab(t.id)}
+            to={t.href}
             className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-semibold transition-colors sm:text-sm ${
               tab === t.id
                 ? "bg-white text-brand-700 shadow-sm dark:bg-ink-800 dark:text-brand-300"
@@ -124,7 +143,7 @@ export default function Lesson() {
             <t.icon size={15} />
             <span className="hidden sm:inline">{t.label}</span>
             <span className="sm:hidden">{t.label.split(" ")[0]}</span>
-          </button>
+          </Link>
         ))}
       </div>
 
@@ -155,7 +174,7 @@ export default function Lesson() {
       <div className="mt-10 flex items-center justify-between gap-4 border-t border-ink-200 pt-6 dark:border-ink-800">
         {prev ? (
           <Link
-            to={`/kurs/${prev.slug}`}
+            to={`/kurs/${prev.slug}${suffix}`}
             className="group flex items-center gap-2 rounded-xl border border-ink-200 px-4 py-2.5 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-50 dark:border-ink-800 dark:text-ink-300 dark:hover:bg-ink-900"
           >
             <ArrowLeft size={15} className="transition-transform group-hover:-translate-x-0.5" />
@@ -166,7 +185,7 @@ export default function Lesson() {
         )}
         {next ? (
           <Link
-            to={`/kurs/${next.slug}`}
+            to={`/kurs/${next.slug}${suffix}`}
             className="group flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
           >
             <span className="hidden sm:inline">Keyingi mavzu</span>
