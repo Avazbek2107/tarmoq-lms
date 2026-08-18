@@ -3,7 +3,7 @@ import { Info, Lightbulb, AlertTriangle } from "lucide-react";
 
 export function H2({ children }: { children: ReactNode }) {
   return (
-    <h2 className="mb-3 mt-10 font-display text-xl font-bold text-ink-900 dark:text-white first:mt-0">
+    <h2 className="mb-3 mt-10 border-l-4 border-brand-500 pl-3 font-display text-xl font-bold text-ink-900 dark:text-white first:mt-0">
       {children}
     </h2>
   );

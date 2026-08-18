@@ -5,6 +5,7 @@ import RequireAdmin from "./components/RequireAdmin";
 import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
 import Lesson from "./pages/Lesson";
+import VirtualLab from "./pages/VirtualLab";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/kurs" element={<Catalog />} />
           <Route path="/kurs/:slug/:section?" element={<Lesson />} />
+          <Route path="/laboratoriya" element={<VirtualLab />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

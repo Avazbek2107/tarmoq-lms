@@ -10,7 +10,7 @@ export default function Catalog() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-8">
       <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-wider text-brand-500">
+        <p className="text-xs font-bold uppercase tracking-widest text-brand-500">
           Kurs dasturi
         </p>
         <h1 className="mt-1 font-display text-3xl font-bold text-ink-900 dark:text-white">
@@ -25,7 +25,7 @@ export default function Catalog() {
         <div className="mt-5 flex items-center gap-3">
           <div className="h-2 w-full max-w-xs overflow-hidden rounded-full bg-ink-100 dark:bg-ink-800">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-brand-500 to-accent-500 transition-all duration-500"
+              className="h-full rounded-full bg-brand-500 transition-all duration-500"
               style={{ width: `${percent}%` }}
             />
           </div>
@@ -35,39 +35,39 @@ export default function Catalog() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {modules.map((m) => {
           const done = isCompleted(m.id);
           return (
             <Link
               key={m.id}
               to={`/kurs/${m.slug}`}
-              className="group relative flex flex-col rounded-2xl border border-ink-200 bg-white p-5 transition-all hover:-translate-y-1 hover:shadow-lg dark:border-ink-800 dark:bg-ink-900/40"
+              className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
             >
-              {done && (
-                <span className="absolute right-4 top-4 text-emerald-500">
-                  <CheckCircle2 size={18} />
-                </span>
-              )}
-              <div className="mb-3 inline-flex w-fit rounded-xl bg-gradient-to-br from-brand-500 to-accent-500 p-2.5 text-white">
-                <ModuleIcon icon={m.icon} className="h-[18px] w-[18px]" />
+              <div className="relative flex h-28 items-center justify-center bg-gradient-to-br from-brand-500 to-accent-500">
+                <ModuleIcon icon={m.icon} className="h-9 w-9 text-white" />
+                {done && (
+                  <span className="absolute right-3 top-3 rounded-full bg-white p-1 text-emerald-500">
+                    <CheckCircle2 size={16} />
+                  </span>
+                )}
               </div>
-              <span className="text-xs font-semibold text-ink-400">
-                {String(m.id).padStart(2, "0")}-MAVZU
-              </span>
-              <h3 className="mt-1 font-display text-sm font-bold leading-snug text-ink-900 group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-400">
-                {m.title}
-              </h3>
-              <p className="mt-1.5 flex-1 text-xs text-ink-500 dark:text-ink-400">
-                {m.shortDesc}
-              </p>
-              <div className="mt-4 flex items-center justify-between border-t border-ink-100 pt-3 text-xs text-ink-400 dark:border-ink-800">
-                <span className="flex items-center gap-1">
-                  <Clock size={12} /> {m.duration}
+              <div className="flex flex-1 flex-col p-5">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-ink-400">
+                  {String(m.id).padStart(2, "0")}-mavzu
                 </span>
-                <span className="flex items-center gap-1 font-semibold text-brand-600 opacity-0 transition-opacity group-hover:opacity-100 dark:text-brand-400">
-                  Boshlash <ArrowRight size={12} />
-                </span>
+                <h3 className="mt-1 font-display text-sm font-bold uppercase tracking-wide leading-snug text-ink-900">
+                  {m.title}
+                </h3>
+                <p className="mt-2 flex-1 text-xs text-ink-500">{m.shortDesc}</p>
+                <div className="mt-4 flex items-center justify-between border-t border-ink-100 pt-3">
+                  <span className="flex items-center gap-1 text-xs text-ink-400">
+                    <Clock size={12} /> {m.duration}
+                  </span>
+                  <span className="flex items-center gap-1 text-xs font-bold uppercase tracking-wide text-brand-600 group-hover:text-brand-700">
+                    Boshlash <ArrowRight size={12} />
+                  </span>
+                </div>
               </div>
             </Link>
           );
